@@ -1,0 +1,63 @@
+azure-pipeline.yml
+trigger: none
+
+variables: 
+  #- group: Titan_OneMiddleware_Functionapp   
+            
+parameters:
+ - name: Projectname
+   displayName: Enter your Projectname
+   type: string
+ - name: Environment
+   displayName: Select Environment
+   type: string
+   values:
+   - Dev
+   - QA
+   - Prod
+ - name: appName
+   value: ''
+  
+ - name: artifactName  
+   value: ''
+      
+ - name: serviceConnection 
+   value: ''   
+stages:
+- template: templates/dotnet-build.yml
+  parameters: 
+    Environment: ${{ parameters.Environment }} 
+    ProjectName: ${{ parameters.Projectname }}
+    artifactName: ${{ parameters.artifactName }}
+	
+${{ if eq(parameters.Environment, 'Dev') }}: 
+
+- template: templates/dotnet-release.yml
+  parameters: 
+    Environment: ${{ parameters.Environment }}   
+    ProjectName: ${{ parameters.Projectname }}
+    appName: ${{ parameters.appName }}  #appname-functionapp982024
+    artifactName: ${{ parameters.artifactName }}
+    serviceConnection: ${{ parameters.serviceConnection }}
+
+${{ if eq(parameters.Environment, 'QA') }}: 
+
+- template: templates/dotnet-release.yml
+  parameters: 
+    Environment: ${{ parameters.Environment }}   
+    ProjectName: ${{ parameters.Projectname }}
+    appName: ${{ parameters.appName }}
+    artifactName: ${{ parameters.artifactName }}
+    serviceConnection: ${{ parameters.serviceConnection }}	
+	
+
+${{ if eq(parameters.Environment, 'PROD') }}: 
+
+- template: templates/dotnet-release.yml
+  parameters: 
+    Environment: ${{ parameters.Environment }}   
+    ProjectName: ${{ parameters.Projectname }}
+    appName: ${{ parameters.appName }}
+    artifactName: ${{ parameters.artifactName }}
+    serviceConnection: ${{ parameters.serviceConnection }}	
+	
